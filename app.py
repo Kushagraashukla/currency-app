@@ -16,54 +16,103 @@ IMG_SIZE = 224
 # PAGE CONFIG
 # ==============================
 
-st.set_page_config(
-    page_title="Currency Detector",
-    layout="centered"
-)
+st.set_page_config(page_title="Currency Detector", layout="wide")
 
 # ==============================
-# CUSTOM UI STYLE
+# WEBSITE STYLE UI (HTML + CSS)
 # ==============================
 
 st.markdown("""
 <style>
 
-.main {
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+body {
+    background: #0f172a;
 }
 
-h1 {
+.main {
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+}
+
+/* Navbar */
+.navbar {
+    padding:15px;
+    background:#020617;
+    border-radius:10px;
     text-align:center;
+    font-size:24px;
+    font-weight:bold;
     color:white;
 }
 
+/* Hero Section */
+.hero {
+    text-align:center;
+    padding:60px 20px;
+    color:white;
+}
+
+.hero h1 {
+    font-size:48px;
+}
+
+.hero p {
+    font-size:20px;
+    color:#94a3b8;
+}
+
+/* Cards */
+.card {
+    padding:30px;
+    border-radius:15px;
+    background:#1e293b;
+    color:white;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+
+/* Button */
 .stButton>button {
     width:100%;
-    background-color:#00c6ff;
-    color:white;
+    height:50px;
     font-size:18px;
+    background:linear-gradient(to right,#3b82f6,#06b6d4);
+    color:white;
     border-radius:10px;
 }
 
-.result-box {
+/* Result box */
+.result {
     padding:20px;
-    border-radius:15px;
-    background: rgba(255,255,255,0.1);
+    border-radius:12px;
+    background:#16a34a;
     text-align:center;
-    font-size:22px;
+    font-size:28px;
     color:white;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-st.title("Indian Currency Detection")
-st.markdown("### AI Powered Currency Recognition System")
+# ==============================
+# NAVBAR
+# ==============================
+
+st.markdown('<div class="navbar">AI Currency Detection System</div>', unsafe_allow_html=True)
+
+# ==============================
+# HERO SECTION
+# ==============================
+
+st.markdown("""
+<div class="hero">
+<h1>Indian Currency Recognition</h1>
+<p>Deep Learning powered currency detection system</p>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
 # ==============================
-# LOAD MODEL
+# LOAD MODEL (UNCHANGED BACKEND)
 # ==============================
 
 @st.cache_resource
@@ -75,7 +124,7 @@ def load_model():
 model, class_names = load_model()
 
 # ==============================
-# PREPROCESS
+# PREPROCESS (UNCHANGED)
 # ==============================
 
 def preprocess_image(image):
@@ -102,7 +151,7 @@ def preprocess_image(image):
     return img
 
 # ==============================
-# PREDICT
+# PREDICT (UNCHANGED)
 # ==============================
 
 def predict_currency(image):
@@ -117,7 +166,7 @@ def predict_currency(image):
 # ==============================
 
 option = st.radio(
-    "Choose Detection Mode",
+    "Choose Mode",
     ["Upload Image", "Live Webcam"],
     horizontal=True
 )
@@ -130,34 +179,35 @@ st.divider()
 
 if option == "Upload Image":
 
-    uploaded_file = st.file_uploader(
-        "Upload Currency Image",
-        type=["jpg", "png", "jpeg"]
-    )
+    col1, col2 = st.columns(2)
 
-    if uploaded_file:
+    with col1:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        uploaded_file = st.file_uploader("Upload Currency Image")
 
-        col1, col2 = st.columns([1,1])
-
-        with col1:
+        if uploaded_file:
             image = Image.open(uploaded_file)
-            st.image(image, caption="Uploaded Image", use_container_width=True)
+            st.image(image, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        with col2:
-            st.write("")
-            st.write("")
+    with col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+
+        if uploaded_file:
             if st.button("Detect Currency"):
 
-                with st.spinner("Analyzing image..."):
+                with st.spinner("Processing..."):
                     label, confidence = predict_currency(image)
 
                 st.markdown(
-                    f"<div class='result-box'>Detected: Rs {label}</div>",
+                    f"<div class='result'>Detected: Rs {label}</div>",
                     unsafe_allow_html=True
                 )
 
                 st.progress(int(confidence))
                 st.write(f"Confidence: {confidence:.2f}%")
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ==============================
 # WEBCAM MODE
@@ -165,26 +215,31 @@ if option == "Upload Image":
 
 elif option == "Live Webcam":
 
-    st.info("Show currency in center, good lighting, full note visible")
+    col1, col2 = st.columns(2)
 
-    camera_image = st.camera_input("Capture Currency")
+    with col1:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        camera_image = st.camera_input("Capture Currency")
 
-    if camera_image:
-
-        col1, col2 = st.columns([1,1])
-
-        with col1:
+        if camera_image:
             image = Image.open(camera_image)
-            st.image(image, caption="Captured Image", use_container_width=True)
+            st.image(image, use_container_width=True)
 
-        with col2:
-            with st.spinner("Analyzing image..."):
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    with col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+
+        if camera_image:
+            with st.spinner("Processing..."):
                 label, confidence = predict_currency(image)
 
             st.markdown(
-                f"<div class='result-box'>Detected: Rs {label}</div>",
+                f"<div class='result'>Detected: Rs {label}</div>",
                 unsafe_allow_html=True
             )
 
             st.progress(int(confidence))
             st.write(f"Confidence: {confidence:.2f}%")
+
+        st.markdown('</div>', unsafe_allow_html=True)
