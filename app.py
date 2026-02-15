@@ -23,11 +23,27 @@ st.title("💰 Indian Currency Detection")
 # LOAD MODEL
 # ==============================
 
+import gdown
+import os
+
+MODEL_PATH = "currency_model2.h5"
+DRIVE_FILE_ID = "1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6"
+
+
 @st.cache_resource
 def load_model():
+
+    # download if not exists
+    if not os.path.exists(MODEL_PATH):
+        url = f"https://drive.google.com/uc?id={DRIVE_FILE_ID}"
+        with st.spinner("Downloading model... (first time only)"):
+            gdown.download(url, MODEL_PATH, quiet=False)
+
     model = tf.keras.models.load_model(MODEL_PATH)
     class_names = np.load(CLASS_PATH, allow_pickle=True)
+
     return model, class_names
+
 
 model, class_names = load_model()
 
