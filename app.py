@@ -4,28 +4,29 @@ import numpy as np
 import cv2
 from PIL import Image
 
+# ==============================
 # SETTINGS
+# ==============================
 
 MODEL_PATH = "currency_model2.h5"
 CLASS_PATH = "class_names.npy"
 IMG_SIZE = 224
 
-
+# ==============================
 # PAGE CONFIG
+# ==============================
 
 st.set_page_config(page_title="Currency Detector", layout="wide")
 
+# ==============================
 # WEBSITE STYLE UI (HTML + CSS)
+# ==============================
 
 st.markdown("""
 <style>
 
-body {
-    background: #0f172a;
-}
-
-.main {
-    background: linear-gradient(135deg,#0f172a,#1e293b);
+.stApp {
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
 }
 
 /* Navbar */
@@ -52,14 +53,15 @@ body {
 
 .hero p {
     font-size:20px;
-    color:#94a3b8;
+    color:#d1d5db;
 }
 
 /* Cards */
 .card {
     padding:30px;
     border-radius:15px;
-    background:#1e293b;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
     color:white;
     box-shadow:0 10px 30px rgba(0,0,0,0.4);
 }
@@ -82,16 +84,21 @@ body {
     text-align:center;
     font-size:28px;
     color:white;
+    margin-top:20px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+# ==============================
 # NAVBAR
+# ==============================
 
 st.markdown('<div class="navbar">AI Currency Detection System</div>', unsafe_allow_html=True)
 
+# ==============================
 # HERO SECTION
+# ==============================
 
 st.markdown("""
 <div class="hero">
@@ -102,7 +109,9 @@ st.markdown("""
 
 st.divider()
 
+# ==============================
 # LOAD MODEL (UNCHANGED BACKEND)
+# ==============================
 
 @st.cache_resource
 def load_model():
@@ -112,7 +121,9 @@ def load_model():
 
 model, class_names = load_model()
 
+# ==============================
 # PREPROCESS (UNCHANGED)
+# ==============================
 
 def preprocess_image(image):
 
@@ -137,7 +148,9 @@ def preprocess_image(image):
 
     return img
 
+# ==============================
 # PREDICT (UNCHANGED)
+# ==============================
 
 def predict_currency(image):
     img = preprocess_image(image)
@@ -146,7 +159,9 @@ def predict_currency(image):
     confidence = np.max(prediction) * 100
     return class_names[predicted_index], confidence
 
+# ==============================
 # MODE SELECTOR
+# ==============================
 
 option = st.radio(
     "Choose Mode",
@@ -156,64 +171,27 @@ option = st.radio(
 
 st.divider()
 
-
-# UPLOAD MODE
-
+# ==============================
+# UPLOAD MODE (BUTTON BELOW IMAGE)
+# ==============================
 
 if option == "Upload Image":
 
-    col1, col2 = st.columns(2)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
 
-    with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        uploaded_file = st.file_uploader("Upload Currency Image")
+    uploaded_file = st.file_uploader("Upload Currency Image")
 
-        if uploaded_file:
-            image = Image.open(uploaded_file)
-            st.image(image, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
+    # instruction message
+    st.info("For best accuracy, use only cropped currency note images")
 
-    with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
+    if uploaded_file:
+        image = Image.open(uploaded_file)
 
-        if uploaded_file:
-            if st.button("Detect Currency"):
+        # show uploaded image
+        st.image(image, use_container_width=True)
 
-                with st.spinner("Processing..."):
-                    label, confidence = predict_currency(image)
-
-                st.markdown(
-                    f"<div class='result'>Detected: Rs {label}</div>",
-                    unsafe_allow_html=True
-                )
-
-                st.progress(int(confidence))
-                st.write(f"Confidence: {confidence:.2f}%")
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-# ==============================
-# WEBCAM MODE
-# ==============================
-
-elif option == "Live Webcam":
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        camera_image = st.camera_input("Capture Currency")
-
-        if camera_image:
-            image = Image.open(camera_image)
-            st.image(image, use_container_width=True)
-
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-
-        if camera_image:
+        # button just below image
+        if st.button("Detect Currency"):
             with st.spinner("Processing..."):
                 label, confidence = predict_currency(image)
 
@@ -225,6 +203,33 @@ elif option == "Live Webcam":
             st.progress(int(confidence))
             st.write(f"Confidence: {confidence:.2f}%")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
+# ==============================
+# WEBCAM MODE
+# ==============================
 
+elif option == "Live Webcam":
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+
+    camera_image = st.camera_input("Capture Currency")
+
+    st.info("Capture only cropped currency note image for best accuracy")
+
+    if camera_image:
+        image = Image.open(camera_image)
+        st.image(image, use_container_width=True)
+
+        with st.spinner("Processing..."):
+            label, confidence = predict_currency(image)
+
+        st.markdown(
+            f"<div class='result'>Detected: Rs {label}</div>",
+            unsafe_allow_html=True
+        )
+
+        st.progress(int(confidence))
+        st.write(f"Confidence: {confidence:.2f}%")
+
+    st.markdown('</div>', unsafe_allow_html=True)
