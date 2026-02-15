@@ -4,23 +4,18 @@ import numpy as np
 import cv2
 from PIL import Image
 
-# ==============================
 # SETTINGS
-# ==============================
 
 MODEL_PATH = "currency_model2.h5"
 CLASS_PATH = "class_names.npy"
 IMG_SIZE = 224
 
-# ==============================
+
 # PAGE CONFIG
-# ==============================
 
 st.set_page_config(page_title="Currency Detector", layout="wide")
 
-# ==============================
 # WEBSITE STYLE UI (HTML + CSS)
-# ==============================
 
 st.markdown("""
 <style>
@@ -92,15 +87,11 @@ body {
 </style>
 """, unsafe_allow_html=True)
 
-# ==============================
 # NAVBAR
-# ==============================
 
 st.markdown('<div class="navbar">AI Currency Detection System</div>', unsafe_allow_html=True)
 
-# ==============================
 # HERO SECTION
-# ==============================
 
 st.markdown("""
 <div class="hero">
@@ -111,9 +102,7 @@ st.markdown("""
 
 st.divider()
 
-# ==============================
 # LOAD MODEL (UNCHANGED BACKEND)
-# ==============================
 
 @st.cache_resource
 def load_model():
@@ -123,9 +112,7 @@ def load_model():
 
 model, class_names = load_model()
 
-# ==============================
 # PREPROCESS (UNCHANGED)
-# ==============================
 
 def preprocess_image(image):
 
@@ -150,9 +137,7 @@ def preprocess_image(image):
 
     return img
 
-# ==============================
 # PREDICT (UNCHANGED)
-# ==============================
 
 def predict_currency(image):
     img = preprocess_image(image)
@@ -161,9 +146,7 @@ def predict_currency(image):
     confidence = np.max(prediction) * 100
     return class_names[predicted_index], confidence
 
-# ==============================
 # MODE SELECTOR
-# ==============================
 
 option = st.radio(
     "Choose Mode",
@@ -173,9 +156,9 @@ option = st.radio(
 
 st.divider()
 
-# ==============================
+
 # UPLOAD MODE
-# ==============================
+
 
 if option == "Upload Image":
 
@@ -243,3 +226,4 @@ elif option == "Live Webcam":
             st.write(f"Confidence: {confidence:.2f}%")
 
         st.markdown('</div>', unsafe_allow_html=True)
+
