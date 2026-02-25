@@ -118,20 +118,20 @@ st.divider()
 @st.cache_resource
 def load_model():
 
-    MODEL_PATH = "currency_model2.h5"
-    CLASS_PATH = "class_names.npy"
-
-    FILE_ID = "1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6"
+    FILE_ID = "YOUR_REAL_FILE_ID"
 
     if not os.path.exists(MODEL_PATH):
-        url = f"https://drive.google.com/uc?id={1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6}"
+        url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
         gdown.download(url, MODEL_PATH, quiet=False)
 
     model = tf.keras.models.load_model(MODEL_PATH)
     class_names = np.load(CLASS_PATH, allow_pickle=True)
 
     return model, class_names
-    model, class_names = load_model()
+
+
+# 🔥 THIS MUST BE OUTSIDE FUNCTION
+model, class_names = load_model()
 
 # ==============================
 # PREPROCESS (UNCHANGED)
@@ -245,6 +245,7 @@ elif option == "Live Webcam":
         st.write(f"Confidence: {confidence:.2f}%")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
