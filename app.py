@@ -121,10 +121,10 @@ def load_model():
     MODEL_PATH = "currency_model2.h5"
     CLASS_PATH = "class_names.npy"
 
-    FILE_ID = "PASTE_YOUR_GOOGLE_DRIVE_FILE_ID"
+    FILE_ID = "1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6"
 
     if not os.path.exists(MODEL_PATH):
-        url = f"https://drive.google.com/uc?id={FILE_ID}"
+        url = f"https://drive.google.com/uc?id={1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6}"
         gdown.download(url, MODEL_PATH, quiet=False)
 
     model = tf.keras.models.load_model(MODEL_PATH)
@@ -245,5 +245,6 @@ elif option == "Live Webcam":
         st.write(f"Confidence: {confidence:.2f}%")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
