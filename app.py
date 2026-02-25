@@ -3,6 +3,8 @@ import tensorflow as tf
 import numpy as np
 import cv2
 from PIL import Image
+import os
+import gdown
 
 # ==============================
 # SETTINGS
@@ -115,11 +117,20 @@ st.divider()
 
 @st.cache_resource
 def load_model():
+
+    MODEL_PATH = "currency_model2.h5"
+    CLASS_PATH = "class_names.npy"
+
+    FILE_ID = "PASTE_YOUR_GOOGLE_DRIVE_FILE_ID"
+
+    if not os.path.exists(MODEL_PATH):
+        url = f"https://drive.google.com/uc?id={FILE_ID}"
+        gdown.download(url, MODEL_PATH, quiet=False)
+
     model = tf.keras.models.load_model(MODEL_PATH)
     class_names = np.load(CLASS_PATH, allow_pickle=True)
-    return model, class_names
 
-model, class_names = load_model()
+    return model, class_names
 
 # ==============================
 # PREPROCESS (UNCHANGED)
@@ -233,3 +244,4 @@ elif option == "Live Webcam":
         st.write(f"Confidence: {confidence:.2f}%")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
