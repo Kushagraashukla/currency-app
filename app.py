@@ -118,7 +118,7 @@ st.divider()
 @st.cache_resource
 def load_model():
 
-    FILE_ID = "YOUR_REAL_FILE_ID"
+    FILE_ID = "1jipkYSGgtrx7AgGfGcHAXB-kU5aCKBj6"
 
     if not os.path.exists(MODEL_PATH):
         url = f"https://drive.google.com/uc?export=download&id={FILE_ID}"
@@ -245,6 +245,7 @@ elif option == "Live Webcam":
         st.write(f"Confidence: {confidence:.2f}%")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 
