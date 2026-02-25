@@ -131,6 +131,7 @@ def load_model():
     class_names = np.load(CLASS_PATH, allow_pickle=True)
 
     return model, class_names
+    model, class_names = load_model()
 
 # ==============================
 # PREPROCESS (UNCHANGED)
@@ -244,4 +245,5 @@ elif option == "Live Webcam":
         st.write(f"Confidence: {confidence:.2f}%")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
